@@ -10,7 +10,7 @@ services:
     environment:
       - DB_HOST=mysql
       - DB_PORT=3306
-      - DB_NAME=job
+      - DB_NAME= message_queue
       - DB_USER=admin
       - DB_PASS=admin
   mysql:
@@ -19,7 +19,7 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root  # Set the root password
-      MYSQL_DATABASE: job      # Optional: Create a default database
+      MYSQL_DATABASE: message_queue      # Optional: Create a default database
       MYSQL_USER: admin                # Optional: Create a default user
       MYSQL_PASSWORD: admin        # Optional: Set the user's password
     ports:
