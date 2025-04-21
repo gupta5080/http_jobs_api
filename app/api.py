@@ -34,7 +34,7 @@ def get_jobs():
     return jobs
 
 @app.post("/jobs")
-def create_job(request_body: str):
+def create_job(request_body: str = Body(..., media_type="text/plain")):
     """
     Creates a new job record in the database.
     
@@ -46,6 +46,7 @@ def create_job(request_body: str):
     """
     db = get_db_connection()
     cursor = db.cursor()
+    print(request_body)
     cursor.execute("INSERT INTO jobs (title) VALUES (%s)", (request_body,))
     db.commit()
     cursor.close()
