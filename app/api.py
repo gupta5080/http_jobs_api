@@ -46,7 +46,7 @@ def create_job(job: Job):
     """
     db = get_db_connection()
     cursor = db.cursor()
-    cursor.execute("INSERT INTO jobs (title) VALUES (%s)", (job.title))
+    cursor.execute("INSERT INTO jobs (title) VALUES (%s)", (job.title,))
     db.commit()
     cursor.close()
     db.close()
