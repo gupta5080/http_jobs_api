@@ -19,7 +19,7 @@ class Job(BaseModel):
 def read_root():
     return {"Hello": "World"}
     
-@app.get("/jobs")
+@app.get("/job")
 def get_jobs(
     amount: Optional[int] = Query(None, gt=0, description="Maximum number of jobs to retrieve"),
     checkpoint: Optional[int] = Query(None, gt=0, description="The ID to start fetching jobs after")
@@ -32,11 +32,14 @@ def get_jobs(
     """
     print("INFO: value of amount and checkpoint", amount, checkpoint)
     if checkpoint is None:
+        print("INFO: checkpoint is None")
         checkpoint = 0
     if amount is None:
+        print("INFO: amount is None")
         query = "SELECT * FROM jobs HAVING id > %s"
         params = (checkpoint,)
     else:
+        print("INFO: Inside else condition where checkpoint and amount is not null")
         query = "SELECT * FROM jobs HAVING id > %s LIMIT %s"
         params = (checkpoint, amount)
 
@@ -48,7 +51,7 @@ def get_jobs(
     db.close()
     return jobs
 
-@app.post("/jobs")
+@app.post("/job")
 def create_job(request_body: str = Body(..., media_type="text/plain")):
     """
     Creates a new job record in the database.

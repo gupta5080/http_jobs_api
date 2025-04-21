@@ -1,13 +1,25 @@
 version: '3.8'
 
 services:
+  api:
+    build: ./app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=job
+      - DB_USER=admin
+      - DB_PASS=admin
   mysql:
     image: mysql:latest
     container_name: mysql_container
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root  # Set the root password
-      MYSQL_DATABASE: jobs       # Optional: Create a default database
+      MYSQL_DATABASE: jobs      # Optional: Create a default database
       MYSQL_USER: admin                # Optional: Create a default user
       MYSQL_PASSWORD: admin        # Optional: Set the user's password
     ports:

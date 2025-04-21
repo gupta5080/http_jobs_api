@@ -16,13 +16,3 @@ def get_db_connection():
     )
 
 
-
-# Replace with your MySQL connection details
-# db_config = {
-#     'host': '127.0.0.1',
-#     'port': 3306,
-#     'user': 'admin',
-#     'password': 'admin',
-#     'database': 'jobs'  # Optional: specify a database to connect to
-# }
-
