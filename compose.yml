@@ -19,7 +19,7 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root  # Set the root password
-      MYSQL_DATABASE: jobs      # Optional: Create a default database
+      MYSQL_DATABASE: job      # Optional: Create a default database
       MYSQL_USER: admin                # Optional: Create a default user
       MYSQL_PASSWORD: admin        # Optional: Set the user's password
     ports:
