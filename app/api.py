@@ -2,6 +2,16 @@ import uvicorn
 from fastapi import FastAPI
 from db import get_db_connection
 app = FastAPI()
+class Job(BaseModel):
+    """
+    A class representing a job record.
+    
+    Attributes:
+        id (int): The unique identifier for the job.
+        title (str): The title of the job.
+    """
+    id: int
+    title: str
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
@@ -22,7 +32,7 @@ def get_jobs():
     return jobs
 
 @app.post("/jobs")
-def create_job(job: dict):
+def create_job(job: Job):
     """
     Creates a new job record in the database.
     
@@ -34,7 +44,7 @@ def create_job(job: dict):
     """
     db = get_db_connection()
     cursor = db.cursor(dictionary=True)
-    cursor.execute("INSERT INTO jobs (title, description) VALUES (%s, %s)", (job.title, job.description))
+    cursor.execute("INSERT INTO jobs (title) VALUES (%s)", (job.title))
     db.commit()
     job['id'] = cursor.lastrowid
     cursor.close()
@@ -47,8 +57,7 @@ if __name__ == "__main__":
     create_table_query = """
     CREATE TABLE IF NOT EXISTS jobs (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        title VARCHAR(255) NOT NULL,
-        description TEXT NOT NULL
+        title VARCHAR(255) NOT NULL
     )
     """
     cursor.execute(create_table_query)
