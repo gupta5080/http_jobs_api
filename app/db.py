@@ -8,11 +8,11 @@ def get_db_connection():
         mysql.connector.connection.MySQLConnection: A connection object to interact with the database.
     """
     return mysql.connector.connect(
-        host='127.0.0.1',
-        port=3306,
-        user='admin',
-        password='admin',   
-        database='jobs'  # Optional: specify a database to connect to
+        host=os.getenv('DB_HOST'),
+        port=os.getenv('DB_PORT'),
+        user=os.getenv('DB_USER'),
+        password=os.getenv('DB_PASSWORD'),   
+        database= os.getenv('DB_NAME')
     )
 
 
