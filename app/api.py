@@ -44,7 +44,7 @@ def create_job(job: Job):
         dict: The created job record.
     """
     db = get_db_connection()
-    cursor = db.cursor(dictionary=True)
+    cursor = db.cursor()
     cursor.execute("INSERT INTO jobs (title) VALUES (%s)", (job.title))
     db.commit()
     job['id'] = cursor.lastrowid
