@@ -17,17 +17,31 @@ class Job(BaseModel):
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
+    
 @app.get("/jobs")
-def get_jobs():
+def get_jobs(
+    amount: Optional[int] = Query(None, gt=0, description="Maximum number of jobs to retrieve"),
+    checkpoint: Optional[int] = Query(None, gt=0, description="The ID to start fetching jobs after")
+):
     """
     Fetches all job records from the database.
     
     returns:
         list: A list of dictionaries representing job records.
     """
+    print("INFO: value of amount and checkpoint", amount, checkpoint)
+    if checkpoint is None:
+        checkpoint = 0
+    if amount is None:
+        query = "SELECT * FROM jobs HAVING id > %s"
+        params = (checkpoint,)
+    else:
+        query = "SELECT * FROM jobs HAVING id > %s LIMIT %s"
+        params = (checkpoint, amount)
+
     db = get_db_connection()
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM jobs")
+    cursor.execute(query, params)
     jobs = cursor.fetchall()
     cursor.close()
     db.close()
