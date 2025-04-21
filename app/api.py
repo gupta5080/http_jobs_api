@@ -51,7 +51,7 @@ def create_job(request_body: str = Body(..., media_type="text/plain")):
     db.commit()
     cursor.close()
     db.close()
-    return job
+    return request_body
 #to start the server
 if __name__ == "__main__":
     db=get_db_connection()
