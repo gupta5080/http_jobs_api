@@ -27,24 +27,7 @@ services:
       - "3306:3306"                     # Map MySQL port to the host
     volumes:
       - mysql_data1:/var/lib/mysql       # Persist MySQL data
-
-  liquibase:
-    image: liquibase/liquibase:latest
-    depends_on:
-      - mysql
-    entrypoint: >
-      liquibase
-      --changeLogFile=changelog.yaml
-      --url=jdbc:mysql://db:3306/job_queue${MYSQL_DATABASE}
-      --username=${MYSQL_USER}
-      --password=${MYSQL_PASSWORD}
-      update
-    environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE}      # Optional: Create a default database
-      MYSQL_USER: ${MYSQL_USER}                # Optional: Create a default user
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}  
-    volumes:
-      - ./liquibase:/liquibase/changelog # Mount the local liquibase directory
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 volumes:
   mysql_data1:
 
