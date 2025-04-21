@@ -13,6 +13,7 @@ services:
       - DB_NAME= ${MYSQL_DATABASE}
       - DB_USER=${MYSQL_USER}
       - DB_PASS=${MYSQL_PASSWORD}
+
   mysql:
     image: mysql:latest
     container_name: mysql_container
@@ -26,6 +27,16 @@ services:
       - "3306:3306"                     # Map MySQL port to the host
     volumes:
       - mysql_data1:/var/lib/mysql       # Persist MySQL data
+
+  liquibase:
+    image: liquibase/liquibase:latest
+    depends_on:
+      - mysql
+    command: ["bash", "-c", "liquibase --changeLogFile=changelog.yaml --username=$DB_USER --password=$DB_PASS update"]
+    environment:
+      - LIQUIBASE_DB_URL=jdbc:mysql://mysql:3306/${MYSQL_DATABASE}
+    volumes:
+      - ./liquibase:/liquibase /changelog # Mount the local liquibase directory
 volumes:
   mysql_data1:
 
