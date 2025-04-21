@@ -32,11 +32,14 @@ services:
     image: liquibase/liquibase:latest
     depends_on:
       - mysql
-    command: ["bash", "-c", "liquibase --changeLogFile=changelog.yaml --username=${MYSQL_USER} --password=${MYSQL_PASSWORD} update"]
     environment:
-      - LIQUIBASE_DB_URL=jdbc:mysql://mysql:3306/${MYSQL_DATABASE}
+      LIQUIBASE_COMMAND_UPDATE: true
+      LIQUIBASE_CHANGELOG_FILE: changelog.yaml
+      LIQUIBASE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}
+      LIQUIBASE_USERNAME: ${MYSQL_USER}
+      LIQUIBASE_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
-      - ./liquibase:/liquibase /changelog # Mount the local liquibase directory
+      - ./liquibase:/liquibase/changelog # Mount the local liquibase directory
 volumes:
   mysql_data1:
 
