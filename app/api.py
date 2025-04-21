@@ -1,23 +1,12 @@
 import uvicorn
 from fastapi import FastAPI,Body, Query
-from pydantic import BaseModel
 from typing import Optional
 from .db import get_db_connection
 app = FastAPI()
-class Job(BaseModel):
-    """
-    A class representing a job record.
-    
-    Attributes:
-        title (str): The title of the job.
-    """
-    
-    title: str
-
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
+    return {"root URL": "Welcome to the Job API"}
     
 @app.get("/job")
 def get_jobs(
@@ -25,10 +14,14 @@ def get_jobs(
     checkpoint: Optional[int] = Query(None, gt=0, description="The ID to start fetching jobs after")
 ):
     """
-    Fetches all job records from the database.
-    
-    returns:
-        list: A list of dictionaries representing job records.
+    Fetches job records from the database based on the provided query parameters.
+
+    Args:
+        amount (Optional[int]): The maximum number of job records to retrieve. Must be greater than 0.
+        checkpoint (Optional[int]): The ID of the last job retrieved. Fetches jobs with IDs greater than this value.
+
+    Returns:
+        dict: A dictionary containing a list of job records. Each record includes the job ID and title.
     """
     print("INFO: value of amount and checkpoint", amount, checkpoint)
     if checkpoint is None:
@@ -49,18 +42,20 @@ def get_jobs(
     jobs = cursor.fetchall()
     cursor.close()
     db.close()
-    return jobs
+    return {
+        "jobs": [{"jobId": job['id'], "job": job['title']} for job in jobs]
+    }
 
 @app.post("/job")
 def create_job(request_body: str = Body(..., media_type="text/plain")):
     """
     Creates a new job record in the database.
     
-    args:
-        job (dict): A dictionary representing the job record to be created.
+    Args:
+        request_body (str): The title of the job to be created, provided as plain text.
         
-    returns:
-        dict: The created job record.
+    Returns:
+        str: The title of the created job record.
     """
     db = get_db_connection()
     cursor = db.cursor()
@@ -72,17 +67,6 @@ def create_job(request_body: str = Body(..., media_type="text/plain")):
     return request_body
 #to start the server
 if __name__ == "__main__":
-    db=get_db_connection()
-    cursor = db.cursor(dictionary=True) 
-    create_table_query = """
-    CREATE TABLE IF NOT EXISTS jobs (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        title VARCHAR(255) NOT NULL
-    )
-    """
-    cursor.execute(create_table_query)
-    db.commit()
-    cursor.close()
-    db.close()
-    print("Table created successfully.")
+    print("INFO: Starting server")
+    # Uncomment the line below to run the server with uvicorn
     # uvicorn.run(app, host="0.0.0.0", port=8080)
