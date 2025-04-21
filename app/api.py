@@ -8,11 +8,12 @@ class Job(BaseModel):
     A class representing a job record.
     
     Attributes:
-        id (int): The unique identifier for the job.
         title (str): The title of the job.
     """
-    id: int
+    
     title: str
+
+
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
@@ -25,7 +26,7 @@ def get_jobs():
         list: A list of dictionaries representing job records.
     """
     db = get_db_connection()
-    cursor = db.cursor(dictionary=True)
+    cursor = db.cursor()
     cursor.execute("SELECT * FROM jobs")
     jobs = cursor.fetchall()
     cursor.close()
@@ -47,7 +48,6 @@ def create_job(job: Job):
     cursor = db.cursor()
     cursor.execute("INSERT INTO jobs (title) VALUES (%s)", (job.title))
     db.commit()
-    job['id'] = cursor.lastrowid
     cursor.close()
     db.close()
     return job
