@@ -1,5 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
+from pydantic import BaseModel
 from db import get_db_connection
 app = FastAPI()
 class Job(BaseModel):
