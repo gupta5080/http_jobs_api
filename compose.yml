@@ -25,7 +25,7 @@ services:
     ports:
       - "3306:3306"                     # Map MySQL port to the host
     volumes:
-      - mysql_data:/var/lib/mysql       # Persist MySQL data
+      - mysql_data1:/var/lib/mysql       # Persist MySQL data
 volumes:
-  mysql_data:
+  mysql_data1:
 
