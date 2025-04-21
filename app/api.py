@@ -1,5 +1,5 @@
 import uvicorn
-from fastapi import FastAPI, Body, Query
+from fastapi import FastAPI, Body, Query, HTTPException
 from typing import Optional
 from .db import get_db_connection
 import logging
@@ -30,27 +30,31 @@ def get_jobs(
         dict: A dictionary containing a list of job records. Each record includes the job ID and title.
     """
     logger.info("value of amount and checkpoint: %s, %s", amount, checkpoint)
-    if checkpoint is None:
-        logger.info("checkpoint is None")
-        checkpoint = 0
-    if amount is None:
-        logger.info("amount is None")
-        query = "SELECT * FROM jobs HAVING id > %s"
-        params = (checkpoint,)
-    else:
-        logger.info("Inside else condition where checkpoint and amount is not null")
-        query = "SELECT * FROM jobs HAVING id > %s LIMIT %s"
-        params = (checkpoint, amount)
+    try:
+        if checkpoint is None:
+            logger.info("checkpoint is None")
+            checkpoint = 0
+        if amount is None:
+            logger.info("amount is None")
+            query = "SELECT * FROM jobs HAVING id > %s"
+            params = (checkpoint,)
+        else:
+            logger.info("Inside else condition where checkpoint and amount is not null")
+            query = "SELECT * FROM jobs HAVING id > %s LIMIT %s"
+            params = (checkpoint, amount)
 
-    db = get_db_connection()
-    cursor = db.cursor()
-    cursor.execute(query, params)
-    jobs = cursor.fetchall()
-    cursor.close()
-    db.close()
-    return {
-        "jobs": [{"jobId": job[0], "job": job[1]} for job in jobs]
-    }
+        db = get_db_connection()
+        cursor = db.cursor()
+        cursor.execute(query, params)
+        jobs = cursor.fetchall()
+        cursor.close()
+        db.close()
+        return {
+            "jobs": [{"jobId": job[0], "job": job[1]} for job in jobs]
+        }
+    except Exception as e:
+        logger.error("Unexpected error: %s", e)
+        raise HTTPException(status_code=500, detail="An unexpected error occurred")
 
 @app.post("/job")
 def create_job(request_body: str = Body(..., media_type="text/plain")):
@@ -64,14 +68,18 @@ def create_job(request_body: str = Body(..., media_type="text/plain")):
         str: The title of the created job record.
     """
     logger.info("Received request to create job with title: %s", request_body)
-    db = get_db_connection()
-    cursor = db.cursor()
-    cursor.execute("INSERT INTO jobs (title) VALUES (%s)", (request_body,))
-    db.commit()
-    cursor.close()
-    db.close()
-    logger.info("Job created successfully with title: %s", request_body)
-    return request_body
+    try:
+        db = get_db_connection()
+        cursor = db.cursor()
+        cursor.execute("INSERT INTO jobs (title) VALUES (%s)", (request_body,))
+        db.commit()
+        cursor.close()
+        db.close()
+        logger.info("Job created successfully with title: %s", request_body)
+        return request_body
+    except Exception as e:
+        logger.error("Unexpected error: %s", e)
+        raise HTTPException(status_code=500, detail="An unexpected error occurred")
 
 # to start the server
 if __name__ == "__main__":
