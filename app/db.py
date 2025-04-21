@@ -1,5 +1,6 @@
 import mysql.connector
 import os
+import logging
 
 def get_db_connection():
     """
@@ -8,18 +9,23 @@ def get_db_connection():
     returns:
         mysql.connector.connection.MySQLConnection: A connection object to interact with the database.
     """
-    print("INFO: Connecting to the database...")
-    print("INFO: DB_HOST:", os.getenv('DB_HOST'))
-    print("INFO: DB_PORT:", os.getenv('DB_PORT'))
-    print("INFO: DB_USER:", os.getenv('DB_USER'))
-    print("INFO: DB_PASSWORD:", os.getenv('DB_PASSWORD'))
-    print("INFO: DB_NAME:", os.getenv('DB_NAME'))
-    return mysql.connector.connect(
-        host=os.getenv('DB_HOST'),
-        port=os.getenv('DB_PORT'),
-        user=os.getenv('DB_USER'),
-        password=os.getenv('DB_PASSWORD'),   
-        database= os.getenv('DB_NAME')
-    )
+    logger = logging.getLogger(__name__)
+    try:
+        logger.info("Connecting to the database...")
+        logger.info("DB_HOST: %s", os.getenv('DB_HOST'))
+        logger.info("DB_PORT: %s", os.getenv('DB_PORT'))
+        logger.info("DB_USER: %s", os.getenv('DB_USER'))
+        connection = mysql.connector.connect(
+            host=os.getenv('DB_HOST'),
+            port=os.getenv('DB_PORT'),
+            user=os.getenv('DB_USER'),
+            password=os.getenv('DB_PASSWORD'),
+            database=os.getenv('DB_NAME')
+        )
+        logger.info("Database connection established successfully.")
+        return connection
+    except mysql.connector.Error as err:
+        logger.error("Error connecting to the database: %s", err)
+        raise
 
 

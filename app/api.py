@@ -1,13 +1,19 @@
 import uvicorn
-from fastapi import FastAPI,Body, Query
+from fastapi import FastAPI, Body, Query
 from typing import Optional
 from .db import get_db_connection
+import logging
+
 app = FastAPI()
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 @app.get("/")
 def read_root():
     return {"root URL": "Welcome to the Job API"}
-    
+
 @app.get("/job")
 def get_jobs(
     amount: Optional[int] = Query(None, gt=0, description="Maximum number of jobs to retrieve"),
@@ -23,16 +29,16 @@ def get_jobs(
     Returns:
         dict: A dictionary containing a list of job records. Each record includes the job ID and title.
     """
-    print("INFO: value of amount and checkpoint", amount, checkpoint)
+    logger.info("value of amount and checkpoint: %s, %s", amount, checkpoint)
     if checkpoint is None:
-        print("INFO: checkpoint is None")
+        logger.info("checkpoint is None")
         checkpoint = 0
     if amount is None:
-        print("INFO: amount is None")
+        logger.info("amount is None")
         query = "SELECT * FROM jobs HAVING id > %s"
         params = (checkpoint,)
     else:
-        print("INFO: Inside else condition where checkpoint and amount is not null")
+        logger.info("Inside else condition where checkpoint and amount is not null")
         query = "SELECT * FROM jobs HAVING id > %s LIMIT %s"
         params = (checkpoint, amount)
 
@@ -57,16 +63,18 @@ def create_job(request_body: str = Body(..., media_type="text/plain")):
     Returns:
         str: The title of the created job record.
     """
+    logger.info("Received request to create job with title: %s", request_body)
     db = get_db_connection()
     cursor = db.cursor()
-    print(request_body)
     cursor.execute("INSERT INTO jobs (title) VALUES (%s)", (request_body,))
     db.commit()
     cursor.close()
     db.close()
+    logger.info("Job created successfully with title: %s", request_body)
     return request_body
-#to start the server
+
+# to start the server
 if __name__ == "__main__":
-    print("INFO: Starting server")
+    logger.info("Starting server")
     # Uncomment the line below to run the server with uvicorn
     # uvicorn.run(app, host="0.0.0.0", port=8080)
