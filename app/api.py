@@ -43,7 +43,7 @@ def get_jobs(
     cursor.close()
     db.close()
     return {
-        "jobs": [{"jobId": job['id'], "job": job['title']} for job in jobs]
+        "jobs": [{"jobId": job[0], "job": job[1]} for job in jobs]
     }
 
 @app.post("/job")
