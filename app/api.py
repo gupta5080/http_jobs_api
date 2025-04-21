@@ -1,5 +1,5 @@
 import uvicorn
-from fastapi import FastAPI,Body
+from fastapi import FastAPI,Body, Query
 from pydantic import BaseModel
 from db import get_db_connection
 app = FastAPI()
