@@ -84,5 +84,6 @@ This project creates api for post and get methods using python, where post and g
 - Using Liquibase or a similar tool for initializing the database schema and loading any pre required data
 - Usage of authentication and authorization for the API endpoints.
 - Adding a health check endpoint to monitor the status of the API and database connection.
+- if the job id is non-integer, logic can be updated to have the primary column as text/string and the checpoint can be managed using another timestamp column which can be used to fetch the data in a sorted manner.
 
 ---
