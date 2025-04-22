@@ -27,7 +27,7 @@ def get_jobs(
         checkpoint (Optional[int]): The ID of the last job retrieved. Fetches jobs with IDs greater than this value.
 
     Returns:
-        dict: A dictionary containing a list of job records. Each record includes the job ID and title.
+        dict: A dictionary containing a list of job records. Each record includes the job ID and job.
     """
     logger.info("value of amount and checkpoint: %s, %s", amount, checkpoint)
     try:
@@ -71,12 +71,17 @@ def create_job(request_body: str = Body(..., media_type="text/plain")):
     try:
         db = get_db_connection()
         cursor = db.cursor()
-        cursor.execute("INSERT INTO jobs (title) VALUES (%s)", (request_body,))
+        try:
+            cursor.execute("INSERT INTO jobs (title) VALUES (%s)", (request_body,))
+        except Exception as e:
+            logger.error("Error while inserting job into database: %s", e)
+            raise HTTPException(status_code=500, detail="Failed to create job")
         db.commit()
         cursor.close()
         db.close()
         logger.info("Job created successfully with title: %s", request_body)
-        return request_body
+        job_id = cursor.lastrowid
+        return {"jobId": job_id, "message": "Job created successfully"}, 201
     except Exception as e:
         logger.error("Unexpected error: %s", e)
         raise HTTPException(status_code=500, detail="An unexpected error occurred")

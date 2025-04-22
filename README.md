@@ -1,5 +1,5 @@
 # http_jobs_api
-This project will create api for post and get methods, where post and get methods will create and get data from mysql database
+This project creates api for post and get methods using python, where post and get methods will create and get data from mysql database
 
 ---
 
@@ -14,8 +14,8 @@ This project will create api for post and get methods, where post and get method
 
 1. **Clone the repository**:
    ```bash
-   git clone <repo-url>
-   cd your-project
+   git clone https://github.com/gupta5080/http_jobs_api.git
+   cd https_jobs_api
    ```
 
 2. **Create an `.env` file** (already included):
@@ -33,10 +33,11 @@ This project will create api for post and get methods, where post and get method
 
 4. **Test with curl**:
    ```bash
-   curl -d '{"foo": "bar"}' http://localhost:8080/job
-   curl -d 'ajkashdkja' http://localhost:8080/job 
-   curl http://localhost:8080/job?amount=5
-   curl http://localhost:8080/job?amount=5&checkpoint=1
+   curl -d '{"foo": "bar"}' http://localhost:8080/job # Add/POST to the job
+   curl -d 'ajkashdkja' http://localhost:8080/job # Another example of adding in the queue
+   curl http://localhost:8080/job?amount=5 # Example of retrieving data with a limit of 5 aka amount
+   curl 'http://localhost:8080/job?amount=5&checkpoint=1' # Example of retrieving data with a limit of 5 and a checkpoint of 1
+   curl 'http://localhost:8080/job?checkpoint=2' # Example of retrieving data with a checkpoint of 2
    ```
 
 ---
@@ -45,12 +46,12 @@ This project will create api for post and get methods, where post and get method
 
 ### `POST /job`
 - Body: Raw string
-- Adds a job to the queue
+- Adds a job with a auto increment id to the the database
 
 ### `GET /job?amount=&checkpoint=`
-- `amount`: Max number of jobs to fetch (default: 10)
-- `checkpoint`: Optional job ID after which to fetch jobs
-- Returns a list of jobs with `jobId` and payload
+- `amount`: Max number of jobs to fetch (default: all jobs)
+- `checkpoint`: Optional job ID after which to fetch jobs (default: all jobs)
+- Returns a dictionary containing a list of job records. Each record includes the job ID and job.
 
 ---
 
@@ -58,8 +59,8 @@ This project will create api for post and get methods, where post and get method
 ```
 .
 ├── app/
-│   ├── api.py         # FastAPI routes
-│   ├── database.py     # DB connection
+│   ├── api.py         # Flask API routes and logic   
+│   ├── database.py
 │   ├── requirements.txt
 ├── init.sql            # Auto-create table on DB startup
 ├── docker-compose.yml
@@ -74,11 +75,14 @@ This project will create api for post and get methods, where post and get method
 - Table is initialized via MySQL's `docker-entrypoint-initdb.d` hook
 - Jobs are stored as `TEXT` for flexibility
 - Used MySql for persistent storage
+- Used FastAPI for creating the API as its ease of usage
 
 ---
 
 ## ✅ Todo (Future Enhancements)
-- Move secrets to secret mount for using password
-
+- Move secrets to secret mount for using password so that we are not exposing them in the environment variables
+- Using Liquibase or a similar tool for initializing the database schema and loading any pre required data
+- Usage of authentication and authorization for the API endpoints
+- Adding a health check endpoint to monitor the status of the API and database connection
 
 ---
