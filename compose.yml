@@ -1,0 +1,31 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=${MYSQL_DATABASE}
+      - DB_USER=${MYSQL_USER}
+      - DB_PASSWORD=${MYSQL_PASSWORD}
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql_container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root  # Set the root password
+      MYSQL_DATABASE: ${MYSQL_DATABASE}      # Optional: Create a default database
+      MYSQL_USER: ${MYSQL_USER}                # Optional: Create a default user
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}        # Optional: Set the user's password
+    ports:
+      - "3306:3306"                     # Map MySQL port to the host
+    volumes:
+      - mysql_data1:/var/lib/mysql       # Persist MySQL data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+volumes:
+  mysql_data1:
+
