@@ -59,7 +59,7 @@ This project creates api for post and get methods using python, where post and g
 ```
 .
 ├── app/
-│   ├── api.py         # Flask API routes and logic   
+│   ├── api.py         # FastAPI routes and logic   
 │   ├── database.py
 │   ├── requirements.txt
 ├── init.sql            # Auto-create table on DB startup
