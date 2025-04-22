@@ -82,7 +82,7 @@ This project creates api for post and get methods using python, where post and g
 ## ✅ Todo (Future Enhancements)
 - Move secrets to secret mount for using password so that we are not exposing them in the environment variables
 - Using Liquibase or a similar tool for initializing the database schema and loading any pre required data
-- Usage of authentication and authorization for the API endpoints
-- Adding a health check endpoint to monitor the status of the API and database connection
+- Usage of authentication and authorization for the API endpoints.
+- Adding a health check endpoint to monitor the status of the API and database connection.
 
 ---
